@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery Datatables App</title>
+	<!-- jQuery and Plugins -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<!-- Bootstrap -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- Noty Notifications -->
+	<script type="text/javascript" src="./node_modules/noty/lib/noty.min.js"></script>
+	<!-- jQuery File Upload Dependencies (don't change order!)-->
+	<script src="./node_modules/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+	<script src="./node_modules/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
+	<script src="./node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
+	<!-- Main JS file -->
+	<script type="text/javascript" src="./js/script.js"></script>
+
+	<link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="./node_modules/noty/lib/noty.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+	<div class="container-fluid">
+		
+		<!-- Add New Modal -->
+	  <div id="addNewModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addNewModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+		        <button id="NewModalClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+		        	<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+		        </button>
+		        <h4 class="modal-title" id="addNewModalLabel">Add New Tag</h4>
+	        </div>
+	        <div class="modal-body">
+	        	<form id="addNewForm" role="form">
+			        <div class="form-group row row-with-msg">
+					    	<label class="col-xs-12">Name *<br/>
+					    		<input type="text" class="form-control" name="name" required>
+					    		<em id="validateMsg" class="help-block"></em>
+					    	</label>
+			        </div>
+			        <div class="checkbox row">
+			        	<div class="col-xs-12">
+				         	<label class="checkbox-inline"><input type="checkbox" value="true">My feed</label>
+				         	<label class="checkbox-inline"><input type="checkbox" value="true">My Favourites</label>
+			        	</div>
+		         	</div>
+		         	<div class="form-group row">
+				        <label class="col-xs-12">Type <small>(Changing tag type will affect the entire tag, loss of information may occur)</small><br/>
+				        	<select style="width: 100%">
+				        		<option value="Football club">Football club</option>
+				        		<option value="Basketball club">Basketball club</option>
+				        		<option value="Tennis player">Tennis player</option>
+				        		<option value="Golf player">Golf player</option>
+				        	</select>
+				        </label>
+		         	</div>
+		         	<div class="form-group row">
+		         		<label class="FileUpload col-xs-12">
+		         		<span>Photo</span>
+				        	<div class="DropZone">
+					        	<input class="FileUploadSelect" type="file" name="file">
+					        	<div class="progress">
+					        		<span>Uploading...</span><br/>
+					        		<div class="empty-bar">
+							            <div class="bar"></div>
+					        		</div>
+						        </div>
+						        <div class="buttonContainer">
+						        	<div id="AddPhoto" class="text-center"><span class="header-icons glyphicon glyphicon-plus"></span><br/><span>Add Photo</span></div>
+						        </div>
+				        	</div>
+		         		</label>
+		         	</div>
+	        	</form>
+		    </div>
+		    <div class="modal-footer">
+	        	<button id="addNewCancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        	<button id="addNewSubmit" type="submit" class="btn btn-primary">Save</button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+		<!-- End Add New Modal -->
+
+		<!-- Edit Row Modal -->
+	  <div id="editRowModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editRowModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button id="closeRowModal" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	          <h4 class="modal-title" id="editRowModalLabel">Edit Tag</h4>
+	        </div>
+	        <div class="modal-body">
+	         <form id="editRowForm" role="form">
+	         	<div class="form-group row row-with-msg">
+			        <label class="col-xs-12">Name *<br/>
+			        	<input type="text" class="form-control" name="name" required>
+					    	<em id="validateMsgEdit" class="help-block"></em>
+			        </label>
+	         	</div>
+	         	<div class="checkbox">
+		         	<label class="checkbox-inline"><input type="checkbox" value="true">My feed</label>
+		         	<label class="checkbox-inline"><input type="checkbox" value="true">My Favourites</label>
+	         	</div>
+	         	<div class="form-group row">
+			        <label class="col-xs-12">Type <small>(Changing tag type will affect the entire tag, loss of information may occur)</small><br/>
+			        	<select style="width: 100%">
+			        		<option value="Football club">Football club</option>
+			        		<option value="Basketball club">Basketball club</option>
+			        		<option value="Tennis player">Tennis player</option>
+			        		<option value="Golf player">Golf player</option>
+			        	</select>
+			        </label>
+	         	</div>
+	         	<div class="form-group row">
+		         		<label class="FileUpload col-xs-12">
+		         		<span>Photo</span>
+				        	<div class="DropZone">
+					        	<input class="FileUploadSelect" type="file" name="file">
+					        	<div class="progress">
+					        		<span>Uploading...</span><br/>
+					        		<div class="empty-bar">
+							            <div class="bar"></div>
+					        		</div>
+						        </div>
+						        <div class="buttonContainer">
+						        	<div id="AddPhoto" class="text-center"><span class="header-icons glyphicon glyphicon-plus"></span><br/><span>Add Photo</span></div>
+						        </div>
+				        	</div>
+		         		</label>
+		         	</div>
+	         </form>
+	        </div>
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-default" id="editRowCancel" data-dismiss="modal">Cancel</button>
+	          <button type="submit" class="btn btn-primary" id="editRowSubmit">Edit</button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+		<!-- End Edit Row Modal -->
+
+		<!-- Header-->
+		<header class="row">
+			<h1 class="col-xs-6">
+				<span class="glyphicon glyphicon-tags"></span> TAGS
+			</h1>
+			<div class="header-right col-xs-6">
+				<span id="SelectTagTypes" class="text-center"><span class="header-icons glyphicon glyphicon-list"></span><br/><span>Tag types</span></span>
+				<span id="AddNewButton" class="text-center"><span class="header-icons glyphicon glyphicon-plus"></span><br/><span>New</span></span>
+			</div>
+		</header>
+		<!-- End Header -->
+
+		<!-- Table -->
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="table-responsive">
+					<table id="myTable" class="table stripe hover">
+						<tfoot>
+							<tr role="row">
+								<th class="colsearch"></th>
+								<th class="colsearch"></th>
+								<th class="colsearch"></th>
+								<th class="colselect"></th>
+								<th class="colselect"></th>
+							  <th></th>
+						  </tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+		<!-- End Table -->
+
+		<!-- Footer -->	
+		<footer class="navbar-fixed-bottom">
+			<p>
+				<a href="https://www.linkedin.com/in/stefanradivojevic" target="_blank"><span class="link-icon glyphicon glyphicon-user"></span></a>
+				made this by 
+				<span class="text-center"><span class="heart-beating glyphicon glyphicon-heart"></span></span>
+				and
+				<a id="link-hash-icon" href="https://github.com/stefanradivojevic" target="_blank">
+					&nbsp;&nbsp;&nbsp;&nbsp;
+				</a>
+			</p>
+		</footer>
+		<!-- End Footer -->	
+	</div>
+</body>
+</html>
